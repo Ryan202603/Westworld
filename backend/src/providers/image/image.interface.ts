@@ -6,23 +6,23 @@
 
 export interface ImageGenRequest {
   /** 画面描述(通常直接来自 Panel.description) */
-  prompt: string;
-  width?: number;
-  height?: number;
-  seed?: number;
+  prompt: string
+  width?: number
+  height?: number
+  seed?: number
 }
 
 export interface ImageGenResult {
   /** 实际使用的 provider 名 */
-  provider: string;
+  provider: string
   /** data URI 或对象存储 URL */
-  imageDataUri?: string;
-  note?: string;
+  imageDataUri?: string
+  note?: string
 }
 
 export interface ImageProvider {
-  readonly name: string;
-  generate(request: ImageGenRequest): Promise<ImageGenResult>;
+  readonly name: string
+  generate(request: ImageGenRequest): Promise<ImageGenResult>
 }
 
-export const IMAGE_PROVIDER = Symbol.for('IMAGE_PROVIDER');
+export const IMAGE_PROVIDER = Symbol.for('IMAGE_PROVIDER')

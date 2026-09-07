@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { api } from '../api';
-import type { Project } from '../types';
+import { onMounted, ref } from 'vue'
+import { api } from '../api'
+import type { Project } from '../types'
 
 const emit = defineEmits<{
-  (e: 'open', id: string): void;
-  (e: 'create'): void;
-}>();
+  (e: 'open', id: string): void
+  (e: 'create'): void
+}>()
 
-const projects = ref<Project[]>([]);
-const loading = ref(true);
-const error = ref('');
+const projects = ref<Project[]>([])
+const loading = ref(true)
+const error = ref('')
 
 async function load() {
-  loading.value = true;
-  error.value = '';
+  loading.value = true
+  error.value = ''
   try {
-    projects.value = await api.listProjects();
+    projects.value = await api.listProjects()
   } catch (e) {
-    error.value = (e as Error).message;
+    error.value = (e as Error).message
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
 async function remove(p: Project) {
-  if (!window.confirm(`确定删除《${p.title}》? 其分镜与任务记录会一并删除。`)) return;
+  if (!window.confirm(`确定删除《${p.title}》? 其分镜与任务记录会一并删除。`)) return
   try {
-    await api.deleteProject(p.id);
-    await load();
+    await api.deleteProject(p.id)
+    await load()
   } catch (e) {
-    error.value = (e as Error).message;
+    error.value = (e as Error).message
   }
 }
 
-onMounted(load);
+onMounted(load)
 
 function fmt(iso: string) {
-  return new Date(iso).toLocaleString('zh-CN', { hour12: false });
+  return new Date(iso).toLocaleString('zh-CN', { hour12: false })
 }
 </script>
 

@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import { ref, shallowRef, markRaw, type Component } from 'vue';
-import ProjectListView from './views/ProjectListView.vue';
-import CreateProjectView from './views/CreateProjectView.vue';
-import ProjectDetailView from './views/ProjectDetailView.vue';
-import type { Project } from './types';
+import { ref, shallowRef, markRaw, type Component } from 'vue'
+import ProjectListView from './views/ProjectListView.vue'
+import CreateProjectView from './views/CreateProjectView.vue'
+import ProjectDetailView from './views/ProjectDetailView.vue'
+import type { Project } from './types'
 
-type ViewName = 'list' | 'create' | 'detail';
+type ViewName = 'list' | 'create' | 'detail'
 
-const view = ref<ViewName>('list');
-const currentView = shallowRef<Component>(markRaw(ProjectListView));
-const selectedId = ref('');
-const listKey = ref(0);
+const view = ref<ViewName>('list')
+const currentView = shallowRef<Component>(markRaw(ProjectListView))
+const selectedId = ref('')
+const listKey = ref(0)
 
 function go(viewName: ViewName) {
-  view.value = viewName;
-  if (viewName === 'list') listKey.value++;
+  view.value = viewName
+  if (viewName === 'list') listKey.value++
   currentView.value = markRaw(
-    viewName === 'create' ? CreateProjectView : viewName === 'detail' ? ProjectDetailView : ProjectListView,
-  );
+    viewName === 'create' ? CreateProjectView : viewName === 'detail' ? ProjectDetailView : ProjectListView
+  )
 }
 
 function openProject(id: string) {
-  selectedId.value = id;
-  go('detail');
+  selectedId.value = id
+  go('detail')
 }
 
 function onCreated(p: Project) {
-  openProject(p.id);
+  openProject(p.id)
 }
 </script>
 
@@ -46,13 +46,7 @@ function onCreated(p: Project) {
   </header>
 
   <main>
-    <component
-      :is="currentView"
-      v-if="view === 'list'"
-      :key="listKey"
-      @open="openProject"
-      @create="go('create')"
-    />
+    <component :is="currentView" v-if="view === 'list'" :key="listKey" @open="openProject" @create="go('create')" />
     <component :is="currentView" v-else-if="view === 'create'" @created="onCreated" @cancel="go('list')" />
     <component
       :is="currentView"

@@ -1,45 +1,45 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { api } from '../api';
-import type { Project } from '../types';
+import { ref } from 'vue'
+import { api } from '../api'
+import type { Project } from '../types'
 
 const emit = defineEmits<{
-  (e: 'created', p: Project): void;
-  (e: 'cancel'): void;
-}>();
+  (e: 'created', p: Project): void
+  (e: 'cancel'): void
+}>()
 
-const title = ref('');
-const content = ref('');
-const submitting = ref(false);
-const error = ref('');
+const title = ref('')
+const content = ref('')
+const submitting = ref(false)
+const error = ref('')
 
 function onPickFile(e: Event) {
-  const input = e.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
   reader.onload = () => {
-    content.value = String(reader.result ?? '');
-    if (!title.value) title.value = file.name.replace(/\.(txt|md|epub|pdf)$/i, '');
-  };
-  reader.readAsText(file, 'utf-8');
-  input.value = '';
+    content.value = String(reader.result ?? '')
+    if (!title.value) title.value = file.name.replace(/\.(txt|md|epub|pdf)$/i, '')
+  }
+  reader.readAsText(file, 'utf-8')
+  input.value = ''
 }
 
 async function submit() {
   if (!content.value.trim()) {
-    error.value = '请先粘贴文本或上传 .txt 文件';
-    return;
+    error.value = '请先粘贴文本或上传 .txt 文件'
+    return
   }
-  submitting.value = true;
-  error.value = '';
+  submitting.value = true
+  error.value = ''
   try {
-    const project = await api.createProject({ title: title.value.trim(), content: content.value });
-    emit('created', project);
+    const project = await api.createProject({ title: title.value.trim(), content: content.value })
+    emit('created', project)
   } catch (e) {
-    error.value = (e as Error).message;
+    error.value = (e as Error).message
   } finally {
-    submitting.value = false;
+    submitting.value = false
   }
 }
 </script>
@@ -49,7 +49,8 @@ async function submit() {
     <h2>导入书籍 / 文本</h2>
     <p class="dim">
       后端会自动拆分章节。MVP 为离线 mock 模式；配好
-      <code>LLM_API_KEY</code> 后同一流程走真实大模型出分镜。
+      <code>LLM_API_KEY</code>
+      后同一流程走真实大模型出分镜。
     </p>
 
     <label>作品标题(留空自动取名)</label>
@@ -62,11 +63,7 @@ async function submit() {
         <input type="file" accept=".txt,text/plain" @change="onPickFile" />
       </label>
     </div>
-    <textarea
-      v-model="content"
-      rows="16"
-      placeholder="把小说 / 剧本文本粘贴到这里……"
-    ></textarea>
+    <textarea v-model="content" rows="16" placeholder="把小说 / 剧本文本粘贴到这里……"></textarea>
 
     <p class="dim count">共 {{ content.length }} 字</p>
     <p v-if="error" class="err">{{ error }}</p>

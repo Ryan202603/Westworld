@@ -1,21 +1,21 @@
-import type { GenerateJob, Project, StoryboardResult } from './types';
+import type { GenerateJob, Project, StoryboardResult } from './types'
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, {
     headers: { 'Content-Type': 'application/json' },
-    ...init,
-  });
+    ...init
+  })
   if (!res.ok) {
-    let msg = `${res.status} ${res.statusText}`;
+    let msg = `${res.status} ${res.statusText}`
     try {
-      const b = (await res.json()) as { message?: string; error?: string };
-      msg = b.message ?? b.error ?? msg;
+      const b = (await res.json()) as { message?: string; error?: string }
+      msg = b.message ?? b.error ?? msg
     } catch {
       /* ignore */
     }
-    throw new Error(msg);
+    throw new Error(msg)
   }
-  return res.json() as Promise<T>;
+  return res.json() as Promise<T>
 }
 
 export const api = {
@@ -26,12 +26,10 @@ export const api = {
   deleteProject: (id: string) => req<{ ok: boolean }>(`/projects/${id}`, { method: 'DELETE' }),
 
   generate: (projectId: string, chapterId: string) =>
-    req<{ jobId: string; status: string; chapterId: string }>(
-      `/projects/${projectId}/chapters/${chapterId}/generate`,
-      { method: 'POST' },
-    ),
-  getJob: (projectId: string, jobId: string) =>
-    req<GenerateJob>(`/projects/${projectId}/jobs/${jobId}`),
+    req<{ jobId: string; status: string; chapterId: string }>(`/projects/${projectId}/chapters/${chapterId}/generate`, {
+      method: 'POST'
+    }),
+  getJob: (projectId: string, jobId: string) => req<GenerateJob>(`/projects/${projectId}/jobs/${jobId}`),
   latestStoryboard: (projectId: string, chapterId: string) =>
-    req<StoryboardResult>(`/projects/${projectId}/chapters/${chapterId}/storyboard`),
-};
+    req<StoryboardResult>(`/projects/${projectId}/chapters/${chapterId}/storyboard`)
+}

@@ -5,19 +5,19 @@
 
 export interface LLMGenerateOptions {
   /** 系统提示词 */
-  system?: string;
-  temperature?: number;
+  system?: string
+  temperature?: number
   /** 是否请求 JSON 结构化输出 */
-  jsonMode?: boolean;
+  jsonMode?: boolean
 }
 
 export interface LLMProvider {
-  readonly name: string;
+  readonly name: string
   /** 是否已配置可用(没配 key 时返回 false, 上层走本地兜底) */
-  available(): boolean;
+  available(): boolean
   /** 调用模型并解析为结构化 JSON */
-  generateStructured(prompt: string, options?: LLMGenerateOptions): Promise<unknown>;
+  generateStructured(prompt: string, options?: LLMGenerateOptions): Promise<unknown>
 }
 
 /** NestJS 依赖注入 token: 想要哪个模型, 就在 providers.module 里替换实现 */
-export const LLM_PROVIDER = Symbol.for('LLM_PROVIDER');
+export const LLM_PROVIDER = Symbol.for('LLM_PROVIDER')

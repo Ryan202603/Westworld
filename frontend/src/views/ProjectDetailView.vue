@@ -1,94 +1,94 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
-import { api } from '../api';
-import type { Chapter, Panel, Project, StoryboardResult } from '../types';
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { api } from '../api'
+import type { Chapter, Panel, Project, StoryboardResult } from '../types'
 
-const props = defineProps<{ projectId: string }>();
-const emit = defineEmits<{ (e: 'back'): void }>();
+const props = defineProps<{ projectId: string }>()
+const emit = defineEmits<{ (e: 'back'): void }>()
 
-const project = ref<Project | null>(null);
-const loadError = ref('');
+const project = ref<Project | null>(null)
+const loadError = ref('')
 
 /** 各章节最近一次成功结果 */
-const results = reactive<Record<string, StoryboardResult>>({});
+const results = reactive<Record<string, StoryboardResult>>({})
 /** 各章节正在跑的任务 */
-const running = reactive<Record<string, { jobId: string; status: string }>>({});
+const running = reactive<Record<string, { jobId: string; status: string }>>({})
 /** 各章节最近错误 */
-const errors = reactive<Record<string, string>>({});
+const errors = reactive<Record<string, string>>({})
 /** 章节正文展开开关 */
-const expanded = reactive<Record<string, boolean>>({});
+const expanded = reactive<Record<string, boolean>>({})
 
-const pollers: number[] = [];
+const pollers: number[] = []
 
 async function load() {
-  loadError.value = '';
+  loadError.value = ''
   try {
-    project.value = await api.getProject(props.projectId);
+    project.value = await api.getProject(props.projectId)
   } catch (e) {
-    loadError.value = (e as Error).message;
-    return;
+    loadError.value = (e as Error).message
+    return
   }
   // 页面刷新后恢复各章节的旧成果(忽略失败, 没有就为空)
   await Promise.allSettled(
-    project.value.chapters.map(async (c) => {
+    project.value.chapters.map(async c => {
       try {
-        results[c.id] = await api.latestStoryboard(props.projectId, c.id);
+        results[c.id] = await api.latestStoryboard(props.projectId, c.id)
       } catch {
         /* 尚无结果 */
       }
-    }),
-  );
+    })
+  )
 }
 
 async function generate(chapter: Chapter) {
-  if (running[chapter.id]) return; // 已有一个在跑
-  errors[chapter.id] = '';
+  if (running[chapter.id]) return // 已有一个在跑
+  errors[chapter.id] = ''
   try {
-    const res = await api.generate(props.projectId, chapter.id);
-    running[chapter.id] = { jobId: res.jobId, status: 'pending' };
-    pollChapter(props.projectId, chapter.id, res.jobId);
+    const res = await api.generate(props.projectId, chapter.id)
+    running[chapter.id] = { jobId: res.jobId, status: 'pending' }
+    pollChapter(props.projectId, chapter.id, res.jobId)
   } catch (e) {
-    errors[chapter.id] = (e as Error).message;
+    errors[chapter.id] = (e as Error).message
   }
 }
 
 function pollChapter(projectId: string, chapterId: string, jobId: string) {
   const timer = window.setInterval(async () => {
     if (!running[chapterId] || running[chapterId].jobId !== jobId) {
-      window.clearInterval(timer);
-      return;
+      window.clearInterval(timer)
+      return
     }
     try {
-      const job = await api.getJob(projectId, jobId);
-      running[chapterId] = { jobId, status: job.status };
+      const job = await api.getJob(projectId, jobId)
+      running[chapterId] = { jobId, status: job.status }
       if (job.status === 'done') {
-        if (job.result) results[chapterId] = job.result;
-        delete running[chapterId];
-        window.clearInterval(timer);
+        if (job.result) results[chapterId] = job.result
+        delete running[chapterId]
+        window.clearInterval(timer)
       } else if (job.status === 'error') {
-        errors[chapterId] = job.error ?? '生成失败';
-        delete running[chapterId];
-        window.clearInterval(timer);
+        errors[chapterId] = job.error ?? '生成失败'
+        delete running[chapterId]
+        window.clearInterval(timer)
       }
     } catch (e) {
-      errors[chapterId] = (e as Error).message;
-      delete running[chapterId];
-      window.clearInterval(timer);
+      errors[chapterId] = (e as Error).message
+      delete running[chapterId]
+      window.clearInterval(timer)
     }
-  }, 1200);
-  pollers.push(timer);
+  }, 1200)
+  pollers.push(timer)
 }
 
 function imageFor(panel: Panel, result: StoryboardResult): string | undefined {
-  return result.images.find((im) => im.panel === panel.panel)?.imageDataUri;
+  return result.images.find(im => im.panel === panel.panel)?.imageDataUri
 }
 
 function fmt(iso: string) {
-  return new Date(iso).toLocaleString('zh-CN', { hour12: false });
+  return new Date(iso).toLocaleString('zh-CN', { hour12: false })
 }
 
-onMounted(load);
-onUnmounted(() => pollers.forEach((t) => window.clearInterval(t)));
+onMounted(load)
+onUnmounted(() => pollers.forEach(t => window.clearInterval(t)))
 </script>
 
 <template>
@@ -130,11 +130,7 @@ onUnmounted(() => pollers.forEach((t) => window.clearInterval(t)));
         <div v-if="results[ch.id]" class="panels">
           <div v-for="p in results[ch.id].panels" :key="p.panel" class="panel card">
             <div class="img-wrap">
-              <img
-                v-if="imageFor(p, results[ch.id])"
-                :src="imageFor(p, results[ch.id])"
-                :alt="`第${p.panel}格`"
-              />
+              <img v-if="imageFor(p, results[ch.id])" :src="imageFor(p, results[ch.id])" :alt="`第${p.panel}格`" />
               <div v-else class="no-img">(图片生成失败)</div>
               <span class="panel-no">{{ p.panel }}</span>
             </div>
@@ -148,7 +144,10 @@ onUnmounted(() => pollers.forEach((t) => window.clearInterval(t)));
       </section>
 
       <p class="hint dim">
-        结果生成时间: {{ results && Object.values(results)[0] ? fmt((Object.values(results)[0] as StoryboardResult).createdAt) : '—' }}
+        结果生成时间:
+        {{
+          results && Object.values(results)[0] ? fmt((Object.values(results)[0] as StoryboardResult).createdAt) : '—'
+        }}
         （mock 模式为占位图；接真实出图模型后即真实漫画格）
       </p>
     </template>

@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { StoreModule } from './store/store.module';
-import { ProvidersModule } from './providers/providers.module';
-import { PipelineModule } from './pipeline/pipeline.module';
-import { ApiModule } from './modules/api.module';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { StoreModule } from './store/store.module'
+import { ProvidersModule } from './providers/providers.module'
+import { PipelineModule } from './pipeline/pipeline.module'
+import { ApiModule } from './modules/api.module'
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { ApiModule } from './modules/api.module';
     StoreModule,
     ProvidersModule,
     PipelineModule,
-    ApiModule,
-  ],
+    ApiModule
+  ]
 })
 export class AppModule {}

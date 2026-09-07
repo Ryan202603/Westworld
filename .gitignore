@@ -7,3 +7,9 @@ data/
 backend/data/
 backend/dist/
 frontend/dist/
+
+# npm 锁文件已废弃(pnpm 接管), 勿提交
+package-lock.json
+npm-debug.log*
+coverage/
+*.tsbuildinfo

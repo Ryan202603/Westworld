@@ -1,3 +1,3 @@
-import { StoreModule } from './store.module';
+import { StoreModule } from './store.module'
 
-export { StoreModule };
+export { StoreModule }

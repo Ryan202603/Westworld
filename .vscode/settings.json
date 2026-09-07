@@ -1,0 +1,19 @@
+{
+  // Oxfmt(Oxc 官方 Prettier 兼容格式化器)作为本工作区默认格式化器。
+  // 前提: 项目已安装 oxfmt(根 devDependencies), 扩展通过 `oxfmt --lsp` 工作,
+  // 配置来自根目录 .oxfmtrc.json(由 .prettierrc 迁移生成)。
+  "editor.formatOnSave": true,
+  "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[javascriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[vue]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[json]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[css]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[scss]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[less]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[html]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[markdown]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "oxc.oxc-vscode" }
+}

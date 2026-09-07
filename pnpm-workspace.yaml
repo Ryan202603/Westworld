@@ -1,0 +1,11 @@
+packages:
+  - backend
+  - frontend
+
+# 允许运行 install/postinstall 脚本的依赖(esbuild 需校验平台二进制; @nestjs/core 仅为赞助横幅)
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - esbuild
+allowBuilds:
+  '@nestjs/core': true
+  esbuild: true
