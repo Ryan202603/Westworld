@@ -1,0 +1,19 @@
+{
+  "name": "westworld",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Westworld - AI 漫画生成站(文本 → 分镜 → 漫画格)。Monorepo: backend(NestJS) + frontend(Vue3)",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c yellow,cyan \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run start:dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace backend && npm run build --workspace frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
